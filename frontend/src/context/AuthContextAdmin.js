@@ -2,9 +2,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Create an Auth Context
-const AuthContext = createContext();
+const AuthContextAdmin = createContext();
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => useContext(AuthContextAdmin);
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -34,8 +34,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContextAdmin.Provider value={{ isAuthenticated, login, logout }}>
       {children}
-    </AuthContext.Provider>
+    </AuthContextAdmin.Provider>
   );
 };

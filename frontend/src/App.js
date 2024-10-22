@@ -14,8 +14,9 @@ import Orders from './AdminPages/Orders';
 import Users from './AdminPages/Users';
 
 // Import Auth Context and Protected Route
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContextAdmin';
 import ProtectedRoute from './component/ProtectedRoute';
+import ProductDetails from './component/ProductDetails';
 
 const Tracksuit = () => <h2 className="text-center mt-16">Tracksuit Category</h2>;
 const TShirt = () => <h2 className="text-center mt-16">T-shirt Category</h2>;
@@ -46,6 +47,8 @@ const AppContent = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/category/tracksuit" element={<Tracksuit />} />
         <Route path="/category/tshirt" element={<TShirt />} />
+        {/* Dynamic route for product details */}
+        <Route path="/products/:id" element={<ProductDetails />} />
 
         {/* Admin Routes */}
         <Route 

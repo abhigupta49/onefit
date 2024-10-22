@@ -1,7 +1,7 @@
 // src/component/AdminNavbar.js
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContextAdmin';
 import { useNavigate } from 'react-router-dom';
 const AdminNavbar = () => {
   const {logout} = useAuth();
