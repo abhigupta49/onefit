@@ -55,7 +55,7 @@ const FeaturedCollection = ({ featuredCollection, loading }) => {
         <div className="container mx-auto">
           <Slider {...sliderSettings}>
             {featuredCollection.map((product) => (
-              <div key={product._id} className="p-4">
+              <div key={product.id} className="p-4">
                 <div className="min-w-[250px] bg-white p-6 rounded-lg shadow-lg transition transform hover:scale-105 hover:shadow-2xl text-center">
                   <img
                     src={product.image}
@@ -77,7 +77,7 @@ const FeaturedCollection = ({ featuredCollection, loading }) => {
 
                   {/* Dynamic Routing using Link */}
                   <Link
-                    to={`/products/${product._id}`}
+                    to={`/products/${product.id}`}
                     className="bg-black text-white py-2 px-4 rounded-full hover:bg-gray-800 transition"
                   >
                     Buy Now

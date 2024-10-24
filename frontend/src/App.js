@@ -17,6 +17,7 @@ import Users from './AdminPages/Users';
 import { AuthProvider, useAuth } from './context/AuthContextAdmin';
 import ProtectedRoute from './component/ProtectedRoute';
 import ProductDetails from './component/ProductDetails';
+import AdminProductDetails from './AdminPages/AdminProductDetails';
 
 const Tracksuit = () => <h2 className="text-center mt-16">Tracksuit Category</h2>;
 const TShirt = () => <h2 className="text-center mt-16">T-shirt Category</h2>;
@@ -70,6 +71,14 @@ const AppContent = () => {
             <ProtectedRoute>
               <Products />
             </ProtectedRoute>
+          }
+        />
+        <Route 
+          path='/admin/ProductDetails/:id' 
+          element={
+          <ProtectedRoute>
+            <AdminProductDetails />
+          </ProtectedRoute>
           }
         />
         <Route
