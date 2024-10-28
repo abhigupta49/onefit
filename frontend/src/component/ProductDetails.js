@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { FaStar, FaTruck, FaStore } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 import FeaturedCollection from './FeaturedCollection';
+import { useContext } from 'react';
+import CartContext, { useCart } from '../context/CartContext';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const discountBadgeClass = 'absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded';
 const ratingClass = 'text-yellow-500 flex items-center';
@@ -30,11 +34,22 @@ const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('M');
   const [selectedColor, setSelectedColor] = useState('gray'); // Default color
+  const [addedToCart, setAddedToCart] = useState(false); // New state for cart status
+  const {addToCart} = useCart()
 
   useEffect(() => {
     fetch("https://fakestoreapi.com/products/")
       .then((response) => response.json())
-      .then((data) => setFeaturedCollection(data))
+      .then((data) => {
+        const updateData = data.map((product)=>({
+          ...product,
+          colors: ["white", "blue", "red"],
+          originalPrice:product.price*8,
+          discountPercentage:15,
+          image: [product.image,"https://img.freepik.com/free-psd/white-t-shirt-front-mockup_23-292935585.jpg?t=st=1730027864~exp=1730031464~hmac=2e03a0e6c376fb815b627c017a99103dc09626d44dc8495f47133197bc6a30b9&w=740","https://img.freepik.com/free-photo/white-tshirt-red-background-template_1409-4076.jpg?t=st=1730028188~exp=1730031788~hmac=1c5b222eeef44b63bd53b942278a59b213203776a45e71662be5c36cf5cc0380&w=740"]
+        }))
+        setFeaturedCollection(updateData)
+      })
       .catch((error) => {
         console.error("Error fetching the products:", error);
         setLoading(false);
@@ -58,11 +73,19 @@ const ProductDetails = () => {
     fetchProduct();
   }, [id]);
 
+  const handleAddToCart = (product) => {
+    addToCart(product);
+    setAddedToCart(true); // Set as added to cart
+    toast.success("Added to cart"); // Show toast notification
+  };
+
   const increaseQuantity = () => setQuantity((prev) => prev + 1);
   const decreaseQuantity = () => setQuantity((prev) => Math.max(1, prev - 1));
 
   const handleSizeChange = (size) => setSelectedSize(size);
   const handleColorChange = (color) => setSelectedColor(color);
+
+  
 
   if (loading) {
     return (
@@ -87,7 +110,9 @@ const ProductDetails = () => {
   }
 
   return (
+    
     <>
+      
       <div className="max-w-7xl mx-auto p-20 bg-white rounded-lg shadow-md grid grid-cols-1 m-20 mt-32 md:grid-cols-3 gap-8">
         <div className="relative">
           <img src={product.image} alt={product.title} className="w-full rounded-lg object-cover" />
@@ -156,14 +181,26 @@ const ProductDetails = () => {
         </div>
 
         <div className="space-y-4">
-          <button className={`${buttonClass} bg-gray-800 hover:bg-gray-900`}>Add to Cart</button>
-          <button className={`${buttonClass} bg-blue-600 hover:bg-blue-700`}>Buy Now</button>
+          <button
+            className={`${buttonClass} ${
+              addedToCart ? 'bg-green-500' : 'bg-gray-800 hover:bg-gray-900'
+            }`}
+            onClick={() => handleAddToCart(product)}
+            disabled={addedToCart} // Disable if already added
+          >
+            {addedToCart ? "Added to Cart" : "Add to Cart"}
+          </button>
+          <button className={`${buttonClass} bg-blue-600 hover:bg-blue-700`}>
+            Buy Now
+          </button>
         </div>
       </div>
 
       <div>
         <FeaturedCollection featuredCollection={featuredCollection} loading={loading} />
       </div>
+
+      <ToastContainer position="top-right" autoClose={2000} />
     </>
   );
 };

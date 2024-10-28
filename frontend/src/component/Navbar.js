@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { FaSearch, FaUserAlt, FaShoppingCart, FaBars, FaTimes, FaChevronDown } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 
 const Navbar = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const {cart} = useCart()
 
+  console.log(cart)
   // Dummy category data
   const categories = [
     { id: 1, name: 'Tracksuit' },
@@ -20,13 +23,27 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-black text-white py-4 fixed w-full top-0 z-50 px-2">
+    <nav className="bg-white text-black shadow-md py-4 fixed w-full top-0 z-50 px-8">
       <div className="container mx-auto flex justify-between items-center">
         
         {/* Logo */}
-        <div className="text-2xl font-bold">
+        {/* <div className="text-2xl font-bold">
           <Link to="/">OneFit Sports</Link>
-        </div>
+        </div> */}
+
+            <div className="flex-shrink-0 flex items-center">
+              <Link to="/" className="flex flex-col items-center">
+                <div className="text-3xl font-bold tracking-tight" style={{ fontFamily: 'Arial, sans-serif' }}>
+                  <span style={{ color: '#4CAF50' }}>O</span>
+                  <span style={{ color: '#E91E63' }}>N</span>
+                  <span style={{ color: '#2196F3' }}>E</span>
+                  <span style={{ color: '#9C27B0' }}>F</span>
+                  <span style={{ color: '#00BCD4' }}>I</span>
+                  <span style={{ color: '#FF4081' }}>T</span>
+                </div>
+                <div className="text-sm font-bold text-gray-600 -mt-1">SPORTS</div>
+              </Link>
+            </div>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex space-x-8 items-center">
@@ -58,7 +75,16 @@ const Navbar = () => {
           <div className="flex space-x-4 text-lg">
             <FaSearch className="cursor-pointer hover:text-gray-400" />
             <FaUserAlt className="cursor-pointer hover:text-gray-400" />
-            <FaShoppingCart className="cursor-pointer hover:text-gray-400" />
+            <Link to={`/cart`}>
+              <FaShoppingCart className="cursor-pointer hover:text-gray-400" />
+              {/* Cart count */}
+              {cart.length>0 && (
+                <span className="absolute top-6 right-5 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                  {cart.length}
+                </span>
+              )}
+            </Link>
+            
           </div>
         </div>
 
@@ -101,7 +127,16 @@ const Navbar = () => {
           <div className="flex space-x-4 text-lg">
             <FaSearch className="cursor-pointer hover:text-gray-400" />
             <FaUserAlt className="cursor-pointer hover:text-gray-400" />
-            <FaShoppingCart className="cursor-pointer hover:text-gray-400" />
+            
+            {/* Cart icon with count */}
+            <div className="relative">
+              <FaShoppingCart className="cursor-pointer hover:text-gray-400" />
+              {cart.length > 0 && (
+                <span className="absolute -top-2 -right-5 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                  {cart.length}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       )}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Navbar from './component/Navbar';
 import AdminNavbar from './component/AdminNavbar';
@@ -18,6 +18,10 @@ import { AuthProvider, useAuth } from './context/AuthContextAdmin';
 import ProtectedRoute from './component/ProtectedRoute';
 import ProductDetails from './component/ProductDetails';
 import AdminProductDetails from './AdminPages/AdminProductDetails';
+import { CartConextProvider } from './context/CartContext';
+import CartPages from './ClientPages/CartPages';
+import CheckoutPages from './ClientPages/CheckoutPages';
+import OnefitLoader from './component/OnefitLoader';
 
 const Tracksuit = () => <h2 className="text-center mt-16">Tracksuit Category</h2>;
 const TShirt = () => <h2 className="text-center mt-16">T-shirt Category</h2>;
@@ -26,9 +30,11 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div>
-          <AppContent />
-        </div>
+        <CartConextProvider>
+          <div>
+            <AppContent />
+          </div>
+        </CartConextProvider>
         <Footer />
       </Router>
     </AuthProvider>
@@ -37,26 +43,43 @@ function App() {
 
 const AppContent = () => {
   const location = useLocation();
+  // Loading state
+  const [loading, setLoading] = useState(false);
+  // Trigger loading animation on route change
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => setLoading(false), 1000); // Adjust timeout as needed
+    return () => clearTimeout(timer);
+  }, [location]);
+
   const isAdminPath = location.pathname.startsWith('/admin');
-  const { isAuthenticated } = useAuth(); // Check if user is authenticated
+  const { isAuthenticated } = useAuth();
 
   return (
     <>
+
+      {/* Logo Loader */}
+      {loading && <OnefitLoader />}
       {isAdminPath ? <AdminNavbar /> : <Navbar />}
       <Routes>
         {/* Main Routes */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/category/tracksuit" element={<Tracksuit />} />
-        <Route path="/category/tshirt" element={<TShirt />} />
-        {/* Dynamic route for product details */}
-        <Route path="/products/:id" element={<ProductDetails />} />
+        {!isAdminPath && (
+          <>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/category/tracksuit" element={<Tracksuit />} />
+            <Route path="/category/tshirt" element={<TShirt />} />
+            <Route path="/cart" element={<CartPages />} />
+            <Route path="/products/:id" element={<ProductDetails />} />
+            <Route path="/checkout" element={<CheckoutPages />} />
+          </>
+        )}
 
         {/* Admin Routes */}
-        <Route 
-          path="/admin" 
+        <Route
+          path="/admin"
           element={isAuthenticated ? <Navigate to="/admin/dashboard" /> : <Navigate to="/admin/login" />}
-        /> {/* Redirect to dashboard or login */}
-        
+        />
+
         <Route
           path="/admin/dashboard"
           element={
@@ -73,12 +96,12 @@ const AppContent = () => {
             </ProtectedRoute>
           }
         />
-        <Route 
-          path='/admin/ProductDetails/:id' 
+        <Route
+          path="/admin/ProductDetails/:id"
           element={
-          <ProtectedRoute>
-            <AdminProductDetails />
-          </ProtectedRoute>
+            <ProtectedRoute>
+              <AdminProductDetails />
+            </ProtectedRoute>
           }
         />
         <Route
@@ -105,12 +128,7 @@ const AppContent = () => {
             </ProtectedRoute>
           }
         />
-
-        {/* Login Route */}
-        <Route 
-          path="/admin/login" 
-          element={isAuthenticated ? <Navigate to="/admin/dashboard" /> : <LoginPage />} 
-        />
+        <Route path="/admin/login" element={isAuthenticated ? <Navigate to="/admin/dashboard" /> : <LoginPage />} />
       </Routes>
     </>
   );
