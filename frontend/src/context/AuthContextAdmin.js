@@ -1,5 +1,7 @@
-// AuthContext.js
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import Helpers from "../Helper/Helpers";
+import swal from "sweetalert";
+import { useNavigate } from "react-router-dom";
 
 // Create an Auth Context
 const AuthContextAdmin = createContext();
@@ -8,29 +10,48 @@ export const useAuth = () => useContext(AuthContextAdmin);
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // const [token, setToken] = useState("");
+  const navigate = useNavigate();
 
   // Check localStorage for authentication state on initialization
   useEffect(() => {
-    const storedAuth = localStorage.getItem('isAuthenticated');
-    if (storedAuth === 'true') {
+    const storedAuth = localStorage.getItem("isAuthenticated");
+    if (storedAuth === "true") {
       setIsAuthenticated(true);
     }
   }, []);
 
   // Login function
-  const login = (credentials) => {
-    if (credentials.username === 'admin' && credentials.password === 'admin') {
-      setIsAuthenticated(true);
-      localStorage.setItem('isAuthenticated', 'true'); // Store in localStorage
-      return true;
+  const login = async (credentials) => {
+    let data = {
+      email: credentials?.username,
+      password: credentials?.password,
+    };
+
+    try {
+      const res = await Helpers("/login", "POST", data);
+      if (res && res?.status) {
+        setIsAuthenticated(true);
+        // setToken(res?.token);
+        localStorage.setItem("token", res?.token);
+        localStorage.setItem("isAuthenticated", "true");
+        swal("Login", res?.msg, "success");
+        navigate("/admin/dashboard");
+      } else {
+        swal("Login Failed!", "Admin not found.!", "error");
+      }
+    } catch (error) {
+      console.log(error);
     }
-    return false;
   };
 
   // Logout function
   const logout = () => {
     setIsAuthenticated(false);
-    localStorage.removeItem('isAuthenticated'); // Remove from localStorage
+    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("token");
+    // setToken("");
+    navigate("/");
   };
 
   return (

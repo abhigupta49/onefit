@@ -3,36 +3,36 @@ import Helpers from "../Helper/Helpers";
 import { useAuth } from "../context/AuthContextAdmin";
 import { toast } from "react-hot-toast";
 import Swal from "sweetalert2";
-const Categories = () => {
-  const [categories, setCategories] = useState([]);
-  const [newCategory, setNewCategory] = useState("");
+const AddColor = () => {
+  const [allColor, setAllColor] = useState([]);
+  const [color, setColor] = useState("");
   const { token } = useAuth();
 
   useEffect(() => {
-    getAllCategory();
+    getAllColor();
   }, []);
 
-  const getAllCategory = async () => {
+  const getAllColor = async () => {
     try {
-      const res = await Helpers("/category/get", "GET", null, {}); // Pass token as argument
+      const res = await Helpers("/color/get", "GET", null, {}); // Pass token as argument
       if (res && res?.status) {
-        setCategories(res?.data);
+        setAllColor(res?.data);
       } else {
-        console.log("Failed to fetch categories");
+        console.log("Failed to fetch color");
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleAddCategory = async (e) => {
+  const handleAddColor = async (e) => {
     e.preventDefault();
-    const data = { name: newCategory };
+    const data = { name: color };
     try {
-      const res = await Helpers("/category/add", "POST", data, {}); // Pass token as argument
+      const res = await Helpers("/color/add", "POST", data, {}); // Pass token as argument
       if (res && res?.status) {
-        toast?.success("Category Added Successfully");
-        getAllCategory();
+        toast?.success("Color Added Successfully");
+        getAllColor();
       } else {
         toast?.error(res?.msg);
       }
@@ -40,17 +40,17 @@ const Categories = () => {
       console.log(error);
     }
 
-    setNewCategory(""); // Clear input
+    setColor(""); // Clear input
   };
 
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
 
-  const totalPages = Math.ceil(categories.length / rowsPerPage);
+  const totalPages = Math.ceil(allColor.length / rowsPerPage);
 
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = categories.slice(indexOfFirstRow, indexOfLastRow);
+  const currentRows = allColor.slice(indexOfFirstRow, indexOfLastRow);
 
   const goToNextPage = () => {
     if (currentPage < totalPages) {
@@ -76,10 +76,10 @@ const Categories = () => {
 
     if (result.isConfirmed) {
       try {
-        const res = await Helpers(`/category/delete/${id}`, "DELETE", null, {});
+        const res = await Helpers(`/color/delete/${id}`, "DELETE", null, {});
 
         if (res) {
-          getAllCategory(); // Refresh categories after deletion
+          getAllColor(); // Refresh allColor after deletion
           toast.success("Deleted Successfully");
         } else {
           toast.error("Failed to delete");
@@ -93,27 +93,27 @@ const Categories = () => {
 
   return (
     <div className="p-8 ">
-      <h1 className="text-3xl font-bold mb-8">Category Management</h1>
+      <h1 className="text-3xl font-bold mb-8">Color Management</h1>
 
       <div className="bg-white shadow-md rounded-lg p-6 mb-8">
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-gray-200 text-left">
               <th className="p-4">ID</th>
-              <th className="p-4">Category Name</th>
+              <th className="p-4">Color</th>
               <th className="p-4">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {currentRows.map((category, index) => (
+            {currentRows.map((color, index) => (
               <tr key={index}>
                 <td className="p-4">
                   {(currentPage - 1) * rowsPerPage + index + 1}.
                 </td>
-                <td className="p-4">{category?.name}</td>
+                <td className="p-4">{color?.name}</td>
                 <td className="p-4">
                   <button
-                    onClick={() => onDelete(category?._id)}
+                    onClick={() => onDelete(color?._id)}
                     className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
                   >
                     Delete
@@ -159,15 +159,16 @@ const Categories = () => {
       {/* Add New Category Form */}
       <div className="bg-white shadow-md rounded-lg p-6">
         <h2 className="text-xl font-semibold mb-4">Add New Category</h2>
-        <form onSubmit={handleAddCategory} className="space-y-4">
+        <form onSubmit={handleAddColor} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Category Name
+              Color Name
             </label>
             <input
               type="text"
-              value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
+              value={color}
+              placeholder="Enter color name"
+              onChange={(e) => setColor(e.target.value)}
               className="w-full border border-gray-500 rounded-lg p-2 mt-2 focus:border-blue-500 focus:ring focus:ring-blue-200"
               required
             />
@@ -176,7 +177,7 @@ const Categories = () => {
             type="submit"
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
           >
-            Add Category
+            Add Color
           </button>
         </form>
       </div>
@@ -184,4 +185,4 @@ const Categories = () => {
   );
 };
 
-export default Categories;
+export default AddColor;

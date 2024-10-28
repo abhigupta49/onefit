@@ -6,12 +6,12 @@ import HomePage from './component/HomePage';
 import Footer from './component/Footer';
 
 // Admin Page Imports
-import LoginPage from './AdminPages/LoginPage';
-import Dashboard from './AdminPages/Dashboard';
-import Products from './AdminPages/Products';
-import Categories from './AdminPages/Categories';
-import Orders from './AdminPages/Orders';
-import Users from './AdminPages/Users';
+import LoginPage from "./AdminPages/LoginPage";
+import Dashboard from "./AdminPages/Dashboard";
+import Products from "./AdminPages/Products";
+import Categories from "./AdminPages/Categories";
+import Orders from "./AdminPages/Orders";
+import Users from "./AdminPages/Users";
 
 // Import Auth Context and Protected Route
 import { AuthProvider, useAuth } from './context/AuthContextAdmin';
@@ -23,7 +23,9 @@ import CartPages from './ClientPages/CartPages';
 import CheckoutPages from './ClientPages/CheckoutPages';
 import OnefitLoader from './component/OnefitLoader';
 
-const Tracksuit = () => <h2 className="text-center mt-16">Tracksuit Category</h2>;
+const Tracksuit = () => (
+  <h2 className="text-center mt-16">Tracksuit Category</h2>
+);
 const TShirt = () => <h2 className="text-center mt-16">T-shirt Category</h2>;
 
 function App() {
@@ -36,8 +38,9 @@ function App() {
           </div>
         </CartConextProvider>
         <Footer />
-      </Router>
-    </AuthProvider>
+        </Router>
+      </AuthProvider>
+    
   );
 }
 
@@ -61,6 +64,7 @@ const AppContent = () => {
       {/* Logo Loader */}
       {loading && <OnefitLoader />}
       {isAdminPath ? <AdminNavbar /> : <Navbar />}
+
       <Routes>
         {/* Main Routes */}
         {!isAdminPath && (
@@ -109,6 +113,14 @@ const AppContent = () => {
           element={
             <ProtectedRoute>
               <Categories />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/color"
+          element={
+            <ProtectedRoute>
+              <AddColor />
             </ProtectedRoute>
           }
         />
