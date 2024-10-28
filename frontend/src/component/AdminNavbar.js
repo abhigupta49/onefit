@@ -1,8 +1,8 @@
 // src/component/AdminNavbar.js
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContextAdmin';
-import { FaBars, FaTimes, FaChevronDown } from 'react-icons/fa';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContextAdmin";
+import { FaBars, FaTimes, FaChevronDown } from "react-icons/fa";
 
 const AdminNavbar = () => {
   const { logout } = useAuth();
@@ -13,7 +13,7 @@ const AdminNavbar = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/admin/login');
+    navigate("/admin/login");
   };
 
   return (
@@ -50,9 +50,9 @@ const AdminNavbar = () => {
                 >
                   All Products
                 </Link>
-              
+
                 <Link
-                  to="/admin/products/add"
+                  to="/admin/addProduct"
                   className="block px-4 py-2 hover:bg-gray-200"
                   onClick={() => setProductsDropdownOpen(false)} // Close dropdown
                 >
@@ -64,6 +64,9 @@ const AdminNavbar = () => {
 
           <Link to="/admin/categories" className="hover:text-gray-400">
             Categories
+          </Link>
+          <Link to="/admin/color" className="hover:text-gray-400">
+            Color
           </Link>
           <Link to="/admin/orders" className="hover:text-gray-400">
             Orders

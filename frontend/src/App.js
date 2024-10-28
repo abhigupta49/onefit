@@ -1,48 +1,61 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import Navbar from './component/Navbar';
-import AdminNavbar from './component/AdminNavbar';
-import HomePage from './component/HomePage';
-import Footer from './component/Footer';
-
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  BrowserRouter,
+} from "react-router-dom";
+import Navbar from "./component/Navbar";
+import AdminNavbar from "./component/AdminNavbar";
+import HomePage from "./component/HomePage";
+import Footer from "./component/Footer";
+import { Toaster } from "react-hot-toast";
 // Admin Page Imports
-import LoginPage from './AdminPages/LoginPage';
-import Dashboard from './AdminPages/Dashboard';
-import Products from './AdminPages/Products';
-import Categories from './AdminPages/Categories';
-import Orders from './AdminPages/Orders';
-import Users from './AdminPages/Users';
+import LoginPage from "./AdminPages/LoginPage";
+import Dashboard from "./AdminPages/Dashboard";
+import Products from "./AdminPages/Products";
+import Categories from "./AdminPages/Categories";
+import Orders from "./AdminPages/Orders";
+import Users from "./AdminPages/Users";
 
 // Import Auth Context and Protected Route
-import { AuthProvider, useAuth } from './context/AuthContextAdmin';
-import ProtectedRoute from './component/ProtectedRoute';
-import ProductDetails from './component/ProductDetails';
-import AdminProductDetails from './AdminPages/AdminProductDetails';
+import { AuthProvider, useAuth } from "./context/AuthContextAdmin";
+import ProtectedRoute from "./component/ProtectedRoute";
+import ProductDetails from "./component/ProductDetails";
+import AdminProductDetails from "./AdminPages/AdminProductDetails";
+import AddProduct from "./AdminPages/AddProduct";
+import AddColor from "./AdminPages/AddColor";
 
-const Tracksuit = () => <h2 className="text-center mt-16">Tracksuit Category</h2>;
+const Tracksuit = () => (
+  <h2 className="text-center mt-16">Tracksuit Category</h2>
+);
 const TShirt = () => <h2 className="text-center mt-16">T-shirt Category</h2>;
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
+    <BrowserRouter>
+      <AuthProvider>
+        <Toaster />
         <div>
           <AppContent />
         </div>
         <Footer />
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 
 const AppContent = () => {
   const location = useLocation();
-  const isAdminPath = location.pathname.startsWith('/admin');
+  const isAdminPath = location.pathname.startsWith("/admin");
   const { isAuthenticated } = useAuth(); // Check if user is authenticated
 
   return (
     <>
       {isAdminPath ? <AdminNavbar /> : <Navbar />}
+
       <Routes>
         {/* Main Routes */}
         <Route path="/" element={<HomePage />} />
@@ -50,13 +63,18 @@ const AppContent = () => {
         <Route path="/category/tshirt" element={<TShirt />} />
         {/* Dynamic route for product details */}
         <Route path="/products/:id" element={<ProductDetails />} />
-
         {/* Admin Routes */}
-        <Route 
-          path="/admin" 
-          element={isAuthenticated ? <Navigate to="/admin/dashboard" /> : <Navigate to="/admin/login" />}
-        /> {/* Redirect to dashboard or login */}
-        
+        <Route
+          path="/admin"
+          element={
+            isAuthenticated ? (
+              <Navigate to="/admin/dashboard" />
+            ) : (
+              <Navigate to="/admin/login" />
+            )
+          }
+        />{" "}
+        {/* Redirect to dashboard or login */}
         <Route
           path="/admin/dashboard"
           element={
@@ -73,12 +91,20 @@ const AppContent = () => {
             </ProtectedRoute>
           }
         />
-        <Route 
-          path='/admin/ProductDetails/:id' 
+        <Route
+          path="/admin/addProduct"
           element={
-          <ProtectedRoute>
-            <AdminProductDetails />
-          </ProtectedRoute>
+            <ProtectedRoute>
+              <AddProduct />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/ProductDetails/:id"
+          element={
+            <ProtectedRoute>
+              <AdminProductDetails />
+            </ProtectedRoute>
           }
         />
         <Route
@@ -86,6 +112,14 @@ const AppContent = () => {
           element={
             <ProtectedRoute>
               <Categories />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/color"
+          element={
+            <ProtectedRoute>
+              <AddColor />
             </ProtectedRoute>
           }
         />
@@ -105,11 +139,12 @@ const AppContent = () => {
             </ProtectedRoute>
           }
         />
-
         {/* Login Route */}
-        <Route 
-          path="/admin/login" 
-          element={isAuthenticated ? <Navigate to="/admin/dashboard" /> : <LoginPage />} 
+        <Route
+          path="/admin/login"
+          element={
+            isAuthenticated ? <Navigate to="/admin/dashboard" /> : <LoginPage />
+          }
         />
       </Routes>
     </>

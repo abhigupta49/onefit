@@ -1,52 +1,37 @@
-const express = require('express');
-const connectDB = require('./config/db');
-const dotenv = require('dotenv');
-const adminRoutes = require('./routes/adminRoutes');
-const productRoutes = require('./routes/productRoutes');
+const express = require("express");
+const connectDB = require("./config/db");
+const dotenv = require("dotenv");
+const cors = require("cors"); // Import cors
 
+const adminRoutes = require("./routes/adminRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
+const productRoutes = require("./routes/productRoutes");
+const colorRoutes = require("./routes/colorRoutes");
 
 dotenv.config();
 
 const app = express();
 connectDB();
 
+// Enable CORS for all routes
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "http://yourfrontenddomain.com"], // Replace with your frontend domains
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 // Routes
-app.use('/api/admin', adminRoutes);
-app.use('/api/products', productRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/admin/category", categoryRoutes);
+app.use("/api/admin/products", productRoutes);
+app.use("/api/admin/color", colorRoutes);
 
 // Start server
 const PORT = process.env.PORT || 7025;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-// const bcrypt = require('bcryptjs');
-
-// async function hashPassword(password) {
-//   const salt = await bcrypt.genSalt(10); // generate salt
-//   const hashedPassword = await bcrypt.hash(password, salt); // hash password with salt
-//   console.log(hashedPassword);
-// }
-
-// // Call the function to hash the password
-// hashPassword('admin123');
-
-const bcrypt = require('bcryptjs');
-const Admin = require('../backend/models/adminModel'); // Adjust the path as needed
-
-const createAdmin = async () => {
-  const email = "admin@admin.com"; // Use the same email as in the database
-  const password = "admin123"; // Your desired password
-
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-
-  const admin = new Admin({ email, password: hashedPassword });
-  await admin.save();
-  console.log('Admin created successfully');
-};
-
-// createAdmin();
-
