@@ -10,9 +10,7 @@ import {
   Code,
   List,
 } from "lucide-react";
-import { Button, Card, CardContent, Typography } from "@mui/material";
-import { Eye, Trash2, Upload } from "lucide-react";
-import ProductVarient from "./ProductVarient";
+
 import Helpers from "../Helper/Helpers";
 import Select from "react-select";
 const initialVariants = [

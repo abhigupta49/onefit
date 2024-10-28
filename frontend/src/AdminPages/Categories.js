@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 const Categories = () => {
   const [categories, setCategories] = useState([]);
   const [newCategory, setNewCategory] = useState("");
-  const { token } = useAuth();
+  // const { token } = useAuth();
 
   useEffect(() => {
     getAllCategory();

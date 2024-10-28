@@ -22,6 +22,9 @@ import { CartConextProvider } from './context/CartContext';
 import CartPages from './ClientPages/CartPages';
 import CheckoutPages from './ClientPages/CheckoutPages';
 import OnefitLoader from './component/OnefitLoader';
+import AddColor from './AdminPages/AddColor';
+import AddProduct from './AdminPages/AddProduct';
+
 
 const Tracksuit = () => (
   <h2 className="text-center mt-16">Tracksuit Category</h2>
@@ -97,6 +100,14 @@ const AppContent = () => {
           element={
             <ProtectedRoute>
               <Products />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/addProduct"
+          element={
+            <ProtectedRoute>
+              <AddProduct />
             </ProtectedRoute>
           }
         />

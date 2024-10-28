@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import Helpers from "../Helper/Helpers";
 import swal from "sweetalert";
-import { useNavigate } from "react-router-dom";
+
 
 // Create an Auth Context
 const AuthContextAdmin = createContext();
@@ -11,7 +11,7 @@ export const useAuth = () => useContext(AuthContextAdmin);
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   // const [token, setToken] = useState("");
-  const navigate = useNavigate();
+  
 
   // Check localStorage for authentication state on initialization
   useEffect(() => {
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("token", res?.token);
         localStorage.setItem("isAuthenticated", "true");
         swal("Login", res?.msg, "success");
-        navigate("/admin/dashboard");
+        
       } else {
         swal("Login Failed!", "Admin not found.!", "error");
       }
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("token");
     // setToken("");
-    navigate("/");
+    
   };
 
   return (

@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 const AddColor = () => {
   const [allColor, setAllColor] = useState([]);
   const [color, setColor] = useState("");
-  const { token } = useAuth();
+  // const { token } = useAuth();
 
   useEffect(() => {
     getAllColor();

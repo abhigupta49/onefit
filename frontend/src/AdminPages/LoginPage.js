@@ -10,7 +10,7 @@ const LoginPage = () => {
   const [passwordError, setPasswordError] = useState("");
   // const [error, setError] = useState("");
   const { login } = useAuth();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const validation = useMemo(() => {
     if (
@@ -18,8 +18,8 @@ const LoginPage = () => {
       username.match(mailFormat) &&
       password !== "" &&
       password.length >= 6 &&
-      emailError == "" &&
-      passwordError == ""
+      emailError === "" &&
+      passwordError === ""
     ) {
       return true;
     } else {
@@ -28,7 +28,7 @@ const LoginPage = () => {
   }, [username, password, emailError, passwordError]);
 
   const EmailChecking = () => {
-    if (username == "") {
+    if (username === "") {
       setEmailError("Email field cannot be blank.");
     } else if (username && !username.match(mailFormat)) {
       setEmailError("Please enter  valid email.");
@@ -38,7 +38,7 @@ const LoginPage = () => {
   };
 
   const PasswordChecking = () => {
-    if (password == "") {
+    if (password === "") {
       setPasswordError("Password field cannot be blank.");
     } else if (password && password.length < 6) {
       setPasswordError("Password length must be greater than 5.");
