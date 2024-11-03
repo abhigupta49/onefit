@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Helpers from "../Helper/Helpers";
-import { useAuth } from "../context/AuthContextAdmin";
+
 import { toast } from "react-hot-toast";
 import Swal from "sweetalert2";
 const AddColor = () => {
   const [allColor, setAllColor] = useState([]);
   const [color, setColor] = useState("");
-  // const { token } = useAuth();
+  
 
   useEffect(() => {
     getAllColor();

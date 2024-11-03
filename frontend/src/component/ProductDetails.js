@@ -6,6 +6,7 @@ import { useContext } from 'react';
 import CartContext, { useCart } from '../context/CartContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import FeaturesBar from '../ClientPages/FeaturesBar';
 
 const discountBadgeClass = 'absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded';
 const ratingClass = 'text-yellow-500 flex items-center';
@@ -197,6 +198,7 @@ const ProductDetails = () => {
       </div>
 
       <div>
+        <FeaturesBar />
         <FeaturedCollection featuredCollection={featuredCollection} loading={loading} />
       </div>
 

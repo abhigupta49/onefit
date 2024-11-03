@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { FaSearch, FaUserAlt, FaShoppingCart, FaBars, FaTimes, FaChevronDown } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { FaSearch, FaUserAlt, FaShoppingCart, FaBars, FaTimes, FaChevronDown, FaSignInAlt } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
 const Navbar = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // New state for login
   const {cart} = useCart()
+  const navigate = useNavigate();
 
   console.log(cart)
   // Dummy category data
@@ -20,6 +22,15 @@ const Navbar = () => {
   // Toggle dropdown for mobile
   const handleDropdownClick = () => {
     setDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleLoginClick = () => {
+    if (isLoggedIn) {
+      setDropdownOpen(!isDropdownOpen); // Toggle profile dropdown
+    } else {
+      navigate('/signup'); // Redirect to login page
+      setIsLoggedIn(true); // Set login state
+    }
   };
 
   return (
@@ -74,18 +85,29 @@ const Navbar = () => {
           {/* Icons */}
           <div className="flex space-x-4 text-lg">
             <FaSearch className="cursor-pointer hover:text-gray-400" />
-            <FaUserAlt className="cursor-pointer hover:text-gray-400" />
+            <div className="relative">
+              {isLoggedIn ? (
+                <FaUserAlt onClick={handleLoginClick} className="cursor-pointer hover:text-gray-400" />
+              ) : (
+                <FaSignInAlt onClick={handleLoginClick} className="cursor-pointer hover:text-gray-400" />
+              )}
+              {isLoggedIn && isDropdownOpen && (
+                <div className="absolute right-0 bg-white text-black mt-2 rounded shadow-md w-32 z-20">
+                  <Link to="/my-orders" className="block px-4 py-2 hover:bg-gray-200">My Orders</Link>
+                  <Link to="/my-address" className="block px-4 py-2 hover:bg-gray-200">My Address</Link>
+                </div>
+              )}
+            </div>
             <Link to={`/cart`}>
               <FaShoppingCart className="cursor-pointer hover:text-gray-400" />
-              {/* Cart count */}
-              {cart.length>0 && (
+              {cart.length > 0 && (
                 <span className="absolute top-6 right-5 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
                   {cart.length}
                 </span>
               )}
             </Link>
-            
           </div>
+        
         </div>
 
         {/* Mobile Menu Button */}
@@ -126,9 +148,11 @@ const Navbar = () => {
           {/* Icons */}
           <div className="flex space-x-4 text-lg">
             <FaSearch className="cursor-pointer hover:text-gray-400" />
-            <FaUserAlt className="cursor-pointer hover:text-gray-400" />
-            
-            {/* Cart icon with count */}
+            {isLoggedIn ? (
+              <FaUserAlt onClick={handleLoginClick} className="cursor-pointer hover:text-gray-400" />
+            ) : (
+              <FaSignInAlt onClick={handleLoginClick} className="cursor-pointer hover:text-gray-400" />
+            )}
             <div className="relative">
               <FaShoppingCart className="cursor-pointer hover:text-gray-400" />
               {cart.length > 0 && (

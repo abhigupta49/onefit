@@ -24,6 +24,7 @@ import CheckoutPages from './ClientPages/CheckoutPages';
 import OnefitLoader from './component/OnefitLoader';
 import AddColor from './AdminPages/AddColor';
 import AddProduct from './AdminPages/AddProduct';
+import SignUp from './ClientPages/SignUp';
 
 
 const Tracksuit = () => (
@@ -78,6 +79,7 @@ const AppContent = () => {
             <Route path="/cart" element={<CartPages />} />
             <Route path="/products/:id" element={<ProductDetails />} />
             <Route path="/checkout" element={<CheckoutPages />} />
+            <Route path="/signup" element={<SignUp />} />
           </>
         )}
 

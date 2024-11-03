@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -10,14 +10,37 @@ import {
   Button,
   TextField,
   Divider,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from '@mui/material';
-import { Add, Remove, GridView, ViewList } from '@mui/icons-material';
+import { Add, Remove, GridView, ViewList, LocalShipping, Home } from '@mui/icons-material';
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
 
 export default function ShoppingCart() {
-  const { cart, addToCart, removeFromCart, updateCartItemQuantity, clearCart } = useCart();
+  const { cart, addToCart, updateCartItemQuantity, clearCart } = useCart();
+  const [selectedAddress, setSelectedAddress] = useState('');
+  const [newAddress, setNewAddress] = useState('');
+  const [addressList, setAddressList] = useState([]);
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [deliveryMode, setDeliveryMode] = useState('standard');
+  
   const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+
+  // Handle adding a new address to the address list
+  const handleAddNewAddress = () => {
+    if (newAddress.trim()) {
+      setAddressList([...addressList, newAddress]);
+      setSelectedAddress(newAddress);
+      setNewAddress('');
+      setIsAddressModalOpen(false); // Close modal after adding
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -117,6 +140,39 @@ export default function ShoppingCart() {
                     className="mt-4"
                   />
                   <Divider className="my-4" />
+
+                  {/* Address Selection Section */}
+                  <Typography variant="h6" className="mb-2">Choose Address</Typography>
+                  <Button variant="outlined" size="small" onClick={() => setIsAddressModalOpen(true)} className="mb-4">
+                    {selectedAddress ? "Edit Address" : "Add Address"}
+                  </Button>
+                  <RadioGroup value={selectedAddress} onChange={(e) => setSelectedAddress(e.target.value)}>
+                    {addressList.map((address, index) => (
+                      <FormControlLabel
+                        key={index}
+                        value={address}
+                        control={<Radio />}
+                        label={<><Home style={{ marginRight: '4px' }} /> {address}</>}
+                      />
+                    ))}
+                  </RadioGroup>
+
+                  {/* Delivery Mode Section */}
+                  <Typography variant="h6" className="mt-4 mb-2">Delivery Mode</Typography>
+                  <RadioGroup value={deliveryMode} onChange={(e) => setDeliveryMode(e.target.value)}>
+                    <FormControlLabel
+                      value="standard"
+                      control={<Radio />}
+                      label={<><LocalShipping style={{ marginRight: '4px' }} /> Standard Delivery (3-5 Days)</>}
+                    />
+                    <FormControlLabel
+                      value="express"
+                      control={<Radio />}
+                      label={<><LocalShipping style={{ marginRight: '4px' }} /> Express Delivery (1-2 Days)</>}
+                    />
+                  </RadioGroup>
+
+                  <Divider className="my-4" />
                   <div className="flex justify-between mb-4">
                     <Typography variant="h6">Total</Typography>
                     <Typography variant="h6">₹{(subtotal * 1.07 + 5).toFixed(2)}</Typography>
@@ -132,6 +188,27 @@ export default function ShoppingCart() {
           )}
         </div>
       </Container>
+
+      {/* Address Modal */}
+      <Dialog open={isAddressModalOpen} onClose={() => setIsAddressModalOpen(false)}>
+        <DialogTitle>Add New Address</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            label="Address"
+            placeholder="Enter your full address"
+            multiline
+            rows={3}
+            variant="outlined"
+            value={newAddress}
+            onChange={(e) => setNewAddress(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsAddressModalOpen(false)}>Cancel</Button>
+          <Button onClick={handleAddNewAddress} variant="contained">Add</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
