@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:7025/api/admin";
+const BASE_URL = "http://localhost:7025/api";
 
 async function Helpers(url, method = "GET", data = null, headers = {}) {
   let token = localStorage.getItem("token");

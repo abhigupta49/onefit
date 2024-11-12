@@ -9,12 +9,13 @@ const AddColor = () => {
   // const { token } = useAuth();
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     getAllColor();
   }, []);
 
   const getAllColor = async () => {
     try {
-      const res = await Helpers("/color/get", "GET", null, {}); // Pass token as argument
+      const res = await Helpers("/admin/color/get", "GET", null, {}); // Pass token as argument
       if (res && res?.status) {
         setAllColor(res?.data);
       } else {
@@ -29,7 +30,7 @@ const AddColor = () => {
     e.preventDefault();
     const data = { name: color };
     try {
-      const res = await Helpers("/color/add", "POST", data, {}); // Pass token as argument
+      const res = await Helpers("/admin/color/add", "POST", data, {}); // Pass token as argument
       if (res && res?.status) {
         toast?.success("Color Added Successfully");
         getAllColor();
@@ -76,7 +77,12 @@ const AddColor = () => {
 
     if (result.isConfirmed) {
       try {
-        const res = await Helpers(`/color/delete/${id}`, "DELETE", null, {});
+        const res = await Helpers(
+          `/admin/color/delete/${id}`,
+          "DELETE",
+          null,
+          {}
+        );
 
         if (res) {
           getAllColor(); // Refresh allColor after deletion
@@ -105,22 +111,30 @@ const AddColor = () => {
             </tr>
           </thead>
           <tbody>
-            {currentRows.map((color, index) => (
-              <tr key={index}>
-                <td className="p-4">
-                  {(currentPage - 1) * rowsPerPage + index + 1}.
-                </td>
-                <td className="p-4">{color?.name}</td>
-                <td className="p-4">
-                  <button
-                    onClick={() => onDelete(color?._id)}
-                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {currentRows?.length > 0 ? (
+              currentRows.map((color, index) => (
+                <tr key={index}>
+                  <td className="p-4">
+                    {(currentPage - 1) * rowsPerPage + index + 1}.
+                  </td>
+                  <td className="p-4">{color?.name}</td>
+                  <td className="p-4">
+                    <button
+                      onClick={() => onDelete(color?._id)}
+                      className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <span
+                style={{ color: "red", height: "100%", whiteSpace: "nowrap" }}
+              >
+                No Data Available...
+              </span>
+            )}
           </tbody>
         </table>
 

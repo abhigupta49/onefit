@@ -1,9 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import Navbar from './component/Navbar';
-import AdminNavbar from './component/AdminNavbar';
-import HomePage from './component/HomePage';
-import Footer from './component/Footer';
+import React, { useEffect, useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
+import Navbar from "./component/Navbar";
+import AdminNavbar from "./component/AdminNavbar";
+import HomePage from "./component/HomePage";
+import Footer from "./component/Footer";
 
 // Admin Page Imports
 import LoginPage from "./AdminPages/LoginPage";
@@ -14,17 +20,16 @@ import Orders from "./AdminPages/Orders";
 import Users from "./AdminPages/Users";
 
 // Import Auth Context and Protected Route
-import { AuthProvider, useAuth } from './context/AuthContextAdmin';
-import ProtectedRoute from './component/ProtectedRoute';
-import ProductDetails from './component/ProductDetails';
-import AdminProductDetails from './AdminPages/AdminProductDetails';
-import { CartConextProvider } from './context/CartContext';
-import CartPages from './ClientPages/CartPages';
-import CheckoutPages from './ClientPages/CheckoutPages';
-import OnefitLoader from './component/OnefitLoader';
-import AddColor from './AdminPages/AddColor';
-import AddProduct from './AdminPages/AddProduct';
-
+import { AuthProvider, useAuth } from "./context/AuthContextAdmin";
+import ProtectedRoute from "./component/ProtectedRoute";
+import ProductDetails from "./component/ProductDetails";
+import AdminProductDetails from "./AdminPages/AdminProductDetails";
+import { CartConextProvider } from "./context/CartContext";
+import CartPages from "./ClientPages/CartPages";
+import CheckoutPages from "./ClientPages/CheckoutPages";
+import OnefitLoader from "./component/OnefitLoader";
+import AddColor from "./AdminPages/AddColor";
+import AddProduct from "./AdminPages/AddProduct";
 
 const Tracksuit = () => (
   <h2 className="text-center mt-16">Tracksuit Category</h2>
@@ -41,9 +46,8 @@ function App() {
           </div>
         </CartConextProvider>
         <Footer />
-        </Router>
-      </AuthProvider>
-    
+      </Router>
+    </AuthProvider>
   );
 }
 
@@ -58,12 +62,11 @@ const AppContent = () => {
     return () => clearTimeout(timer);
   }, [location]);
 
-  const isAdminPath = location.pathname.startsWith('/admin');
+  const isAdminPath = location.pathname.startsWith("/admin");
   const { isAuthenticated } = useAuth();
 
   return (
     <>
-
       {/* Logo Loader */}
       {loading && <OnefitLoader />}
       {isAdminPath ? <AdminNavbar /> : <Navbar />}
@@ -76,7 +79,7 @@ const AppContent = () => {
             <Route path="/category/tracksuit" element={<Tracksuit />} />
             <Route path="/category/tshirt" element={<TShirt />} />
             <Route path="/cart" element={<CartPages />} />
-            <Route path="/products/:id" element={<ProductDetails />} />
+            <Route path="/products" element={<ProductDetails />} />
             <Route path="/checkout" element={<CheckoutPages />} />
           </>
         )}
@@ -84,7 +87,13 @@ const AppContent = () => {
         {/* Admin Routes */}
         <Route
           path="/admin"
-          element={isAuthenticated ? <Navigate to="/admin/dashboard" /> : <Navigate to="/admin/login" />}
+          element={
+            isAuthenticated ? (
+              <Navigate to="/admin/dashboard" />
+            ) : (
+              <Navigate to="/admin/login" />
+            )
+          }
         />
 
         <Route
@@ -112,7 +121,7 @@ const AppContent = () => {
           }
         />
         <Route
-          path="/admin/ProductDetails/:id"
+          path="/admin/ProductDetails"
           element={
             <ProtectedRoute>
               <AdminProductDetails />
@@ -151,7 +160,12 @@ const AppContent = () => {
             </ProtectedRoute>
           }
         />
-        <Route path="/admin/login" element={isAuthenticated ? <Navigate to="/admin/dashboard" /> : <LoginPage />} />
+        <Route
+          path="/admin/login"
+          element={
+            isAuthenticated ? <Navigate to="/admin/dashboard" /> : <LoginPage />
+          }
+        />
       </Routes>
     </>
   );
