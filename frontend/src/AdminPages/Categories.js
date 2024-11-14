@@ -9,12 +9,13 @@ const Categories = () => {
   // const { token } = useAuth();
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     getAllCategory();
   }, []);
 
   const getAllCategory = async () => {
     try {
-      const res = await Helpers("/category/get", "GET", null, {}); // Pass token as argument
+      const res = await Helpers("/admin/category/get", "GET", null, {}); // Pass token as argument
       if (res && res?.status) {
         setCategories(res?.data);
       } else {
@@ -29,7 +30,7 @@ const Categories = () => {
     e.preventDefault();
     const data = { name: newCategory };
     try {
-      const res = await Helpers("/category/add", "POST", data, {}); // Pass token as argument
+      const res = await Helpers("/admin/category/add", "POST", data, {}); // Pass token as argument
       if (res && res?.status) {
         toast?.success("Category Added Successfully");
         getAllCategory();
@@ -76,7 +77,12 @@ const Categories = () => {
 
     if (result.isConfirmed) {
       try {
-        const res = await Helpers(`/category/delete/${id}`, "DELETE", null, {});
+        const res = await Helpers(
+          `/admin/category/delete/${id}`,
+          "DELETE",
+          null,
+          {}
+        );
 
         if (res) {
           getAllCategory(); // Refresh categories after deletion
@@ -105,22 +111,30 @@ const Categories = () => {
             </tr>
           </thead>
           <tbody>
-            {currentRows.map((category, index) => (
-              <tr key={index}>
-                <td className="p-4">
-                  {(currentPage - 1) * rowsPerPage + index + 1}.
-                </td>
-                <td className="p-4">{category?.name}</td>
-                <td className="p-4">
-                  <button
-                    onClick={() => onDelete(category?._id)}
-                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {currentRows?.length > 0 ? (
+              currentRows.map((category, index) => (
+                <tr key={index}>
+                  <td className="p-4">
+                    {(currentPage - 1) * rowsPerPage + index + 1}.
+                  </td>
+                  <td className="p-4">{category?.name}</td>
+                  <td className="p-4">
+                    <button
+                      onClick={() => onDelete(category?._id)}
+                      className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <span
+                style={{ color: "red", height: "100%", whiteSpace: "nowrap" }}
+              >
+                No Data Available...
+              </span>
+            )}
           </tbody>
         </table>
 

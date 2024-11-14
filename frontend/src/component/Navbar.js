@@ -1,24 +1,52 @@
+<<<<<<< HEAD
 import React, { useState } from 'react';
 import { FaSearch, FaUserAlt, FaShoppingCart, FaBars, FaTimes, FaChevronDown, FaSignInAlt } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+=======
+import React, { useEffect, useState } from "react";
+import {
+  FaSearch,
+  FaUserAlt,
+  FaShoppingCart,
+  FaBars,
+  FaTimes,
+  FaChevronDown,
+} from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { useCart } from "../context/CartContext";
+import Helpers from "../Helper/Helpers";
+>>>>>>> 7b2aaf540efc36ef3b1f25bf176e8377b3ed2c4b
 
 const Navbar = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+<<<<<<< HEAD
   const [isLoggedIn, setIsLoggedIn] = useState(false); // New state for login
   const {cart} = useCart()
   const navigate = useNavigate();
+=======
+  const [categories, setCategories] = useState([]);
+  const { cart } = useCart();
+>>>>>>> 7b2aaf540efc36ef3b1f25bf176e8377b3ed2c4b
 
-  console.log(cart)
-  // Dummy category data
-  const categories = [
-    { id: 1, name: 'Tracksuit' },
-    { id: 2, name: 'T-shirt' },
-    { id: 3, name: 'Shorts' },
-    { id: 4, name: 'Shoes' },
-  ];
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    getAllCategory();
+  }, []);
 
+  const getAllCategory = async () => {
+    try {
+      const res = await Helpers("/admin/category/get", "GET", null, {}); // Pass token as argument
+      if (res && res?.status) {
+        setCategories(res?.data);
+      } else {
+        console.log("Failed to fetch categories");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   // Toggle dropdown for mobile
   const handleDropdownClick = () => {
     setDropdownOpen(!isDropdownOpen);
@@ -36,36 +64,38 @@ const Navbar = () => {
   return (
     <nav className="bg-white text-black shadow-md py-4 fixed w-full top-0 z-50 px-8">
       <div className="container mx-auto flex justify-between items-center">
-        
         {/* Logo */}
         {/* <div className="text-2xl font-bold">
           <Link to="/">OneFit Sports</Link>
         </div> */}
 
-            <div className="flex-shrink-0 flex items-center">
-              <Link to="/" className="flex flex-col items-center">
-                <div className="text-3xl font-bold tracking-tight" style={{ fontFamily: 'Arial, sans-serif' }}>
-                  <span style={{ color: '#4CAF50' }}>O</span>
-                  <span style={{ color: '#E91E63' }}>N</span>
-                  <span style={{ color: '#2196F3' }}>E</span>
-                  <span style={{ color: '#9C27B0' }}>F</span>
-                  <span style={{ color: '#00BCD4' }}>I</span>
-                  <span style={{ color: '#FF4081' }}>T</span>
-                </div>
-                <div className="text-sm font-bold text-gray-600 -mt-1">SPORTS</div>
-              </Link>
+        <div className="flex-shrink-0 flex items-center">
+          <Link to="/" className="flex flex-col items-center">
+            <div
+              className="text-3xl font-bold tracking-tight"
+              style={{ fontFamily: "Arial, sans-serif" }}
+            >
+              <span style={{ color: "#4CAF50" }}>O</span>
+              <span style={{ color: "#E91E63" }}>N</span>
+              <span style={{ color: "#2196F3" }}>E</span>
+              <span style={{ color: "#9C27B0" }}>F</span>
+              <span style={{ color: "#00BCD4" }}>I</span>
+              <span style={{ color: "#FF4081" }}>T</span>
             </div>
+            <div className="text-sm font-bold text-gray-600 -mt-1">SPORTS</div>
+          </Link>
+        </div>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex space-x-8 items-center">
           {/* Categories Dropdown */}
-          <div 
+          <div
             className="relative py-3"
-            onMouseEnter={() => setDropdownOpen(true)} 
+            onMouseEnter={() => setDropdownOpen(true)}
             onMouseLeave={() => setDropdownOpen(false)}
           >
             <button className="text-lg flex items-center focus:outline-none">
-              Men <FaChevronDown className="ml-2" />
+              Category <FaChevronDown className="ml-2" />
             </button>
             {isDropdownOpen && (
               <div className="absolute bg-black text-white mt-2 rounded shadow-md w-32 z-20">
@@ -100,6 +130,10 @@ const Navbar = () => {
             </div>
             <Link to={`/cart`}>
               <FaShoppingCart className="cursor-pointer hover:text-gray-400" />
+<<<<<<< HEAD
+=======
+              {/* Cart count */}
+>>>>>>> 7b2aaf540efc36ef3b1f25bf176e8377b3ed2c4b
               {cart.length > 0 && (
                 <span className="absolute top-6 right-5 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
                   {cart.length}
@@ -112,7 +146,10 @@ const Navbar = () => {
 
         {/* Mobile Menu Button */}
         <div className="md:hidden">
-          <button onClick={() => setMobileMenuOpen(!isMobileMenuOpen)} className="text-2xl focus:outline-none">
+          <button
+            onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
+            className="text-2xl focus:outline-none"
+          >
             {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
           </button>
         </div>
@@ -148,11 +185,17 @@ const Navbar = () => {
           {/* Icons */}
           <div className="flex space-x-4 text-lg">
             <FaSearch className="cursor-pointer hover:text-gray-400" />
+<<<<<<< HEAD
             {isLoggedIn ? (
               <FaUserAlt onClick={handleLoginClick} className="cursor-pointer hover:text-gray-400" />
             ) : (
               <FaSignInAlt onClick={handleLoginClick} className="cursor-pointer hover:text-gray-400" />
             )}
+=======
+            <FaUserAlt className="cursor-pointer hover:text-gray-400" />
+
+            {/* Cart icon with count */}
+>>>>>>> 7b2aaf540efc36ef3b1f25bf176e8377b3ed2c4b
             <div className="relative">
               <FaShoppingCart className="cursor-pointer hover:text-gray-400" />
               {cart.length > 0 && (

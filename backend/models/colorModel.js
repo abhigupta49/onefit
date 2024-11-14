@@ -1,17 +1,9 @@
-const { default: mongoose } = require("mongoose");
+// models/Color.js
+const mongoose = require("mongoose");
 
-const ColorSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: [true, "Color name is required"],
-      trim: true,
-      unique: true,
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
+const ColorSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  hexCode: { type: String }, // Optional field for color hex code
+});
 
-module.exports = mongoose.model("Productcolor", ColorSchema);
+module.exports = mongoose.model("Color", ColorSchema);

@@ -1,9 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import Navbar from './component/Navbar';
-import AdminNavbar from './component/AdminNavbar';
-import HomePage from './component/HomePage';
-import Footer from './component/Footer';
+import React, { useEffect, useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
+import Navbar from "./component/Navbar";
+import AdminNavbar from "./component/AdminNavbar";
+import HomePage from "./component/HomePage";
+import Footer from "./component/Footer";
 
 // Admin Page Imports
 import LoginPage from "./AdminPages/LoginPage";
@@ -42,9 +48,8 @@ function App() {
           </div>
         </CartConextProvider>
         <Footer />
-        </Router>
-      </AuthProvider>
-    
+      </Router>
+    </AuthProvider>
   );
 }
 
@@ -59,12 +64,11 @@ const AppContent = () => {
     return () => clearTimeout(timer);
   }, [location]);
 
-  const isAdminPath = location.pathname.startsWith('/admin');
+  const isAdminPath = location.pathname.startsWith("/admin");
   const { isAuthenticated } = useAuth();
 
   return (
     <>
-
       {/* Logo Loader */}
       {loading && <OnefitLoader />}
       {isAdminPath ? <AdminNavbar /> : <Navbar />}
@@ -77,7 +81,7 @@ const AppContent = () => {
             <Route path="/category/tracksuit" element={<Tracksuit />} />
             <Route path="/category/tshirt" element={<TShirt />} />
             <Route path="/cart" element={<CartPages />} />
-            <Route path="/products/:id" element={<ProductDetails />} />
+            <Route path="/products" element={<ProductDetails />} />
             <Route path="/checkout" element={<CheckoutPages />} />
             <Route path="/signup" element={<SignUp />} />
           </>
@@ -86,7 +90,13 @@ const AppContent = () => {
         {/* Admin Routes */}
         <Route
           path="/admin"
-          element={isAuthenticated ? <Navigate to="/admin/dashboard" /> : <Navigate to="/admin/login" />}
+          element={
+            isAuthenticated ? (
+              <Navigate to="/admin/dashboard" />
+            ) : (
+              <Navigate to="/admin/login" />
+            )
+          }
         />
 
         <Route
@@ -114,7 +124,7 @@ const AppContent = () => {
           }
         />
         <Route
-          path="/admin/ProductDetails/:id"
+          path="/admin/ProductDetails"
           element={
             <ProtectedRoute>
               <AdminProductDetails />
@@ -153,7 +163,12 @@ const AppContent = () => {
             </ProtectedRoute>
           }
         />
-        <Route path="/admin/login" element={isAuthenticated ? <Navigate to="/admin/dashboard" /> : <LoginPage />} />
+        <Route
+          path="/admin/login"
+          element={
+            isAuthenticated ? <Navigate to="/admin/dashboard" /> : <LoginPage />
+          }
+        />
       </Routes>
     </>
   );

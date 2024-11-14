@@ -10,7 +10,7 @@ const protect = require("../middleware/authMiddleware");
 
 // Login route for admin
 router.post("/add", protect, AddCategory);
-router.get("/get", protect, GetAllCategory);
+router.get("/get", GetAllCategory);
 router.put(`/update/:id`, protect, UpdateCategory);
 router.delete("/delete/:id", protect, DeleteaCategory);
 module.exports = router;

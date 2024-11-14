@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import Helpers from "../Helper/Helpers";
 import swal from "sweetalert";
 
-
 // Create an Auth Context
 const AuthContextAdmin = createContext();
 
@@ -11,7 +10,6 @@ export const useAuth = () => useContext(AuthContextAdmin);
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   // const [token, setToken] = useState("");
-  
 
   // Check localStorage for authentication state on initialization
   useEffect(() => {
@@ -29,14 +27,13 @@ export const AuthProvider = ({ children }) => {
     };
 
     try {
-      const res = await Helpers("/login", "POST", data);
+      const res = await Helpers("/admin/login", "POST", data);
       if (res && res?.status) {
         setIsAuthenticated(true);
         // setToken(res?.token);
         localStorage.setItem("token", res?.token);
         localStorage.setItem("isAuthenticated", "true");
         swal("Login", res?.msg, "success");
-        
       } else {
         swal("Login Failed!", "Admin not found.!", "error");
       }
@@ -51,7 +48,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("token");
     // setToken("");
-    
   };
 
   return (

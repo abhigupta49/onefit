@@ -13,15 +13,16 @@ import {
 
 import Helpers from "../Helper/Helpers";
 import Select from "react-select";
+import ImageLoader from "../Loader/ImageLoader";
+import toast from "react-hot-toast";
 const initialVariants = [
   {
     id: 1,
-    size: "S",
-    color: "White",
-    price: 4500.0,
-    quantity: 10,
-    image:
-      "https://thesketch.in/wp-content/uploads/2024/09/WhatsApp-Image-2024-09-08-at-11.41.57.jpeg?height=40&width=40",
+    size: [],
+    color: "",
+    price: 0,
+    quantity: 0,
+    image: "",
   },
 ];
 function AddProduct() {
@@ -31,14 +32,18 @@ function AddProduct() {
   const [productName, setProductName] = useState("");
   const [productDisc, setProductDesc] = useState("");
   const [variants, setVariants] = useState(initialVariants);
+  const [image, setImage] = useState("");
+
+  const [imageLoader, setImageLoader] = useState(false);
   useEffect(() => {
+    window.scrollTo(0, 0);
     FetchAllCategoryValue();
     FetchAllColor();
   }, []);
 
   const FetchAllCategoryValue = async () => {
     try {
-      const res = await Helpers("/category/get", "GET", null, {});
+      const res = await Helpers("/admin/category/get", "GET", null, {});
       if (res && res?.status) {
         setAllCategory(res?.data);
       } else {
@@ -50,9 +55,9 @@ function AddProduct() {
   };
   const FetchAllColor = async () => {
     try {
-      const res = await Helpers("/color/get", "GET", null, {});
+      const res = await Helpers("/admin/color/get", "GET", null, {});
       if (res && res?.status) {
-        let arr = [];
+        let arr = [{ value: "", label: "Select Color" }];
         res?.data?.forEach((ele) => {
           arr.push({ value: ele?._id, label: ele?.name });
         });
@@ -64,13 +69,59 @@ function AddProduct() {
       console.log(error);
     }
   };
-  const images = [
-    "https://thesketch.in/wp-content/uploads/2024/09/WhatsApp-Image-2024-09-08-at-11.41.57.jpeg?height=300&width=300",
-    "https://thesketch.in/wp-content/uploads/2024/09/WhatsApp-Image-2024-09-08-at-11.41.57.jpeg?height=300&width=300",
-    "https://thesketch.in/wp-content/uploads/2024/09/WhatsApp-Image-2024-09-08-at-11.41.57.jpeg?height=300&width=300",
-    "https://thesketch.in/wp-content/uploads/2024/09/WhatsApp-Image-2024-09-08-at-11.41.57.jpeg?height=300&width=300",
-  ];
 
+  const HandleImage = async (e, id) => {
+    e.preventDefault();
+    setImageLoader(true);
+
+    // Prepare image data
+    const file = e.target.files[0];
+    const data = new FormData();
+    data.append("image", file);
+
+    try {
+      // Directly using fetch to upload the image
+      const response = await fetch(
+        "http://localhost:7025/api/admin/image-upload",
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+
+      const res = await response.json();
+
+      if (res && res.status) {
+        setVariants((prevVariants) =>
+          prevVariants.map((variant) =>
+            variant.id === id ? { ...variant, image: res.url } : variant
+          )
+        );
+        console.log("UploadImageRes", res);
+      } else {
+        toast.error("Failed to upload image");
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error("An error occurred while uploading the image");
+    } finally {
+      setImageLoader(false);
+    }
+  };
+
+  const HandleCrossClick = (id) => {
+    setVariants((prevVariants) =>
+      prevVariants.map((variant) =>
+        variant.id === id ? { ...variant, image: "" } : variant
+      )
+    );
+
+    // Clear file input for the specific row
+    const fileInput = document.querySelector(`#images-${id}`);
+    if (fileInput) {
+      fileInput.value = "";
+    }
+  };
   const handleQuantityChange = (id, increment) => {
     setVariants(
       variants.map((variant) =>
@@ -123,6 +174,40 @@ function AddProduct() {
     { value: "XXL", label: "XXL" },
     { value: "Free Size", label: "Free Size" },
   ];
+
+  const HandleProduct = async (e) => {
+    e.preventDefault();
+    let data = {
+      category: cateogory,
+      productName: productName,
+      productDisc: productDisc,
+      variants: variants,
+    };
+
+    if (!cateogory || !productName || !productDisc || !variants.length) {
+      toast.error("All product fields are required!");
+      return;
+    }
+
+    try {
+      const res = await Helpers("/admin/products/add", "POST", data, {}); // Pass token as argument
+      if (res && res?.status) {
+        toast?.success("Product Added Successfully");
+        setCategory("");
+        setProductName("");
+        setProductDesc("");
+        setVariants(initialVariants);
+        const fileInput = document.querySelector(`#images-1`);
+        if (fileInput) {
+          fileInput.value = "";
+        }
+      } else {
+        toast?.error(res?.msg);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center mt-32">
@@ -224,7 +309,7 @@ function AddProduct() {
             />
           </div>
 
-          <div className="flex gap-2">
+          {/* <div className="flex gap-2">
             <button type="button" className="p-2 rounded hover:bg-gray-200">
               <Bold className="h-4 w-4" />
             </button>
@@ -249,7 +334,7 @@ function AddProduct() {
             <button type="button" className="p-2 rounded hover:bg-gray-200">
               <List className="h-4 w-4" />
             </button>
-          </div>
+          </div> */}
         </form>
       </div>
 
@@ -449,16 +534,31 @@ function AddProduct() {
                   <td className="px-4 py-4 whitespace-nowrap">
                     <input
                       type="file"
+                      id={`images-${variant.id}`} // Unique ID for each row
                       accept="image/*"
-                      onChange={(e) => handleImageChange(variant.id, e)}
+                      onChange={(e) => HandleImage(e, variant.id)}
                       className="border border-gray-300 rounded-md p-1 mb-2"
                     />
+
+                    {imageLoader ? <ImageLoader /> : null}
+
                     {variant.image && (
-                      <img
-                        src={variant.image}
-                        alt="Variant"
-                        className="mt-2 h-16 w-16 object-cover"
-                      />
+                      <div>
+                        <img
+                          src={variant.image}
+                          alt="Variant"
+                          className="mt-2 h-16 w-16 object-cover"
+                        />
+                        <button
+                          onClick={() => HandleCrossClick(variant.id)}
+                          style={{ color: "red" }}
+                          type="button"
+                          className="btn-close"
+                          aria-label="Close"
+                        >
+                          X
+                        </button>
+                      </div>
                     )}
                   </td>
 
@@ -578,6 +678,24 @@ function AddProduct() {
           </table>
         </div>
       </div>
+      <button
+        type="button"
+        className="btn btn-primary"
+        style={{
+          backgroundColor: "#007bff",
+          color: "white",
+          border: "none",
+          padding: "10px 20px",
+          fontSize: "16px",
+          borderRadius: "5px",
+          cursor: "pointer",
+          margin: "5px",
+        }}
+        onClick={(e) => HandleProduct(e)}
+      >
+        Submit
+      </button>
+
       {/* <ProductVarient /> */}
     </div>
   );
