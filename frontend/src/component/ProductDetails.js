@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-import React, { useEffect, useState } from 'react';
-import { FaStar, FaTruck, FaStore } from 'react-icons/fa';
-import { useParams } from 'react-router-dom';
-import FeaturedCollection from './FeaturedCollection';
-import { useContext } from 'react';
-import CartContext, { useCart } from '../context/CartContext';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import FeaturesBar from '../ClientPages/FeaturesBar';
-=======
 import React, { useEffect, useState } from "react";
 import { FaStar, FaTruck, FaStore } from "react-icons/fa";
 import { useLocation, useParams } from "react-router-dom";
@@ -17,7 +6,6 @@ import { useContext } from "react";
 import CartContext, { useCart } from "../context/CartContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
->>>>>>> 7b2aaf540efc36ef3b1f25bf176e8377b3ed2c4b
 
 const discountBadgeClass =
   "absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded";
@@ -319,20 +307,12 @@ const ProductDetails = () => {
         </div>
       </div>
 
-<<<<<<< HEAD
-      <div>
-        <FeaturesBar />
-        <FeaturedCollection featuredCollection={featuredCollection} loading={loading} />
-      </div>
-
-=======
       {/* <div>
         <FeaturedCollection
           featuredCollection={featuredCollection}
           loading={loading}
         />
       </div> */}
->>>>>>> 7b2aaf540efc36ef3b1f25bf176e8377b3ed2c4b
       <ToastContainer position="top-right" autoClose={2000} />
     </>
   );

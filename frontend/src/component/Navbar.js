@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-import React, { useState } from 'react';
-import { FaSearch, FaUserAlt, FaShoppingCart, FaBars, FaTimes, FaChevronDown, FaSignInAlt } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
-=======
+
 import React, { useEffect, useState } from "react";
 import {
   FaSearch,
@@ -12,23 +8,20 @@ import {
   FaBars,
   FaTimes,
   FaChevronDown,
+  FaSignInAlt
 } from "react-icons/fa";
-import { Link } from "react-router-dom";
+
 import { useCart } from "../context/CartContext";
 import Helpers from "../Helper/Helpers";
->>>>>>> 7b2aaf540efc36ef3b1f25bf176e8377b3ed2c4b
 
 const Navbar = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
-<<<<<<< HEAD
   const [isLoggedIn, setIsLoggedIn] = useState(false); // New state for login
-  const {cart} = useCart()
+  
   const navigate = useNavigate();
-=======
   const [categories, setCategories] = useState([]);
   const { cart } = useCart();
->>>>>>> 7b2aaf540efc36ef3b1f25bf176e8377b3ed2c4b
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -130,10 +123,7 @@ const Navbar = () => {
             </div>
             <Link to={`/cart`}>
               <FaShoppingCart className="cursor-pointer hover:text-gray-400" />
-<<<<<<< HEAD
-=======
               {/* Cart count */}
->>>>>>> 7b2aaf540efc36ef3b1f25bf176e8377b3ed2c4b
               {cart.length > 0 && (
                 <span className="absolute top-6 right-5 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
                   {cart.length}
@@ -185,17 +175,9 @@ const Navbar = () => {
           {/* Icons */}
           <div className="flex space-x-4 text-lg">
             <FaSearch className="cursor-pointer hover:text-gray-400" />
-<<<<<<< HEAD
-            {isLoggedIn ? (
-              <FaUserAlt onClick={handleLoginClick} className="cursor-pointer hover:text-gray-400" />
-            ) : (
-              <FaSignInAlt onClick={handleLoginClick} className="cursor-pointer hover:text-gray-400" />
-            )}
-=======
             <FaUserAlt className="cursor-pointer hover:text-gray-400" />
 
             {/* Cart icon with count */}
->>>>>>> 7b2aaf540efc36ef3b1f25bf176e8377b3ed2c4b
             <div className="relative">
               <FaShoppingCart className="cursor-pointer hover:text-gray-400" />
               {cart.length > 0 && (
