@@ -1,151 +1,119 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import Helpers from "../Helper/Helpers";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
-  const [newUser, setNewUser] = useState({ name: '', email: '', phone: '' });
-  const [editingUserId, setEditingUserId] = useState(null);
-  const [editingUserData, setEditingUserData] = useState({ name: '', email: '', phone: '' });
 
-  // Dummy user data
   useEffect(() => {
-    setUsers([
-      { id: 1, name: 'John Doe', email: 'john@example.com', phone: '123-456-7890' },
-      { id: 2, name: 'Jane Smith', email: 'jane@example.com', phone: '987-654-3210' },
-      { id: 3, name: 'Alice Johnson', email: 'alice@example.com', phone: '555-123-4567' },
-    ]);
+    window.scrollTo(0, 0);
+    getAllUserData();
   }, []);
 
-  const handleAddUser = () => {
-    const newUserData = { id: users.length + 1, ...newUser };
-    setUsers([...users, newUserData]);
-    setNewUser({ name: '', email: '', phone: '' });
+  const getAllUserData = async () => {
+    try {
+      const res = await Helpers("/admin/users", "GET", null, {}); // Pass token as argument
+      if (res && res?.status) {
+        setUsers(res?.data);
+      } else {
+        console.log("Failed to fetch cart");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleEditUser = (id) => {
-    const userToEdit = users.find((user) => user.id === id);
-    setEditingUserId(id);
-    setEditingUserData(userToEdit);
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 5;
+
+  const totalPages = Math.ceil(users.length / rowsPerPage);
+
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = users.slice(indexOfFirstRow, indexOfLastRow);
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+    }
   };
 
-  const handleUpdateUser = () => {
-    const updatedUsers = users.map((user) =>
-      user.id === editingUserId ? { ...user, ...editingUserData } : user
-    );
-    setUsers(updatedUsers);
-    setEditingUserId(null);
-    setEditingUserData({ name: '', email: '', phone: '' });
-  };
-
-  const handleDeleteUser = (id) => {
-    const filteredUsers = users.filter((user) => user.id !== id);
-    setUsers(filteredUsers);
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
   };
 
   return (
-    <div className="p-8">
+    <div className="p-8 ">
       <h1 className="text-3xl font-bold mb-8">User Management</h1>
-
-      {/* Add User Form */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold">Add New User</h2>
-        <div className="flex gap-4">
-          <input
-            type="text"
-            placeholder="Name"
-            value={newUser.name}
-            onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-            className="border p-2 rounded"
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={newUser.email}
-            onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-            className="border p-2 rounded"
-          />
-          <input
-            type="text"
-            placeholder="Phone"
-            value={newUser.phone}
-            onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
-            className="border p-2 rounded"
-          />
-          <button onClick={handleAddUser} className="bg-blue-500 text-white p-2 rounded">
-            Add User
-          </button>
-        </div>
-      </div>
-
-      {/* Users Table */}
-      <div className="bg-white shadow-md rounded-lg p-6">
+      <div className="bg-white shadow-md rounded-lg p-6 mb-8">
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-gray-200 text-left">
-              <th className="p-4">User ID</th>
+              <th className="p-4">ID</th>
               <th className="p-4">Name</th>
               <th className="p-4">Email</th>
-              <th className="p-4">Phone</th>
-              <th className="p-4">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td className="p-4">{user.id}</td>
-                <td className="p-4">
-                  {editingUserId === user.id ? (
-                    <input
-                      type="text"
-                      value={editingUserData.name}
-                      onChange={(e) => setEditingUserData({ ...editingUserData, name: e.target.value })}
-                      className="border p-2 rounded"
-                    />
-                  ) : (
-                    user.name
-                  )}
-                </td>
-                <td className="p-4">
-                  {editingUserId === user.id ? (
-                    <input
-                      type="email"
-                      value={editingUserData.email}
-                      onChange={(e) => setEditingUserData({ ...editingUserData, email: e.target.value })}
-                      className="border p-2 rounded"
-                    />
-                  ) : (
-                    user.email
-                  )}
-                </td>
-                <td className="p-4">
-                  {editingUserId === user.id ? (
-                    <input
-                      type="text"
-                      value={editingUserData.phone}
-                      onChange={(e) => setEditingUserData({ ...editingUserData, phone: e.target.value })}
-                      className="border p-2 rounded"
-                    />
-                  ) : (
-                    user.phone
-                  )}
-                </td>
-                <td className="p-4 flex gap-2">
-                  {editingUserId === user.id ? (
-                    <button onClick={handleUpdateUser} className="bg-green-500 text-white p-2 rounded">
-                      Save
+            {users?.length > 0 ? (
+              users.map((item, index) => (
+                <tr key={index}>
+                  <td className="p-4">
+                    {(currentPage - 1) * rowsPerPage + index + 1}.
+                  </td>
+                  <td className="p-4">{item?.name}</td>
+                  <td className="p-4">{item?.email}</td>
+                  {/* <td className="p-4">
+                    <button
+                      onClick={() => onDelete(color?._id)}
+                      className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                    >
+                      Delete
                     </button>
-                  ) : (
-                    <button onClick={() => handleEditUser(user.id)} className="bg-yellow-500 text-white p-2 rounded">
-                      Edit
-                    </button>
-                  )}
-                  <button onClick={() => handleDeleteUser(user.id)} className="bg-red-500 text-white p-2 rounded">
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
+                  </td> */}
+                </tr>
+              ))
+            ) : (
+              <span
+                style={{ color: "red", height: "100%", whiteSpace: "nowrap" }}
+              >
+                No Data Available...
+              </span>
+            )}
           </tbody>
         </table>
+
+        {/* Pagination Controls */}
+        <div className="flex justify-between items-center mt-4">
+          <button
+            onClick={goToPreviousPage}
+            className={`px-4 py-2 rounded ${
+              currentPage === 1
+                ? "bg-gray-300"
+                : "bg-blue-500 text-white hover:bg-blue-600"
+            }`}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+
+          <span className="px-4 py-2 text-center">
+            Page {currentPage} of {totalPages}
+          </span>
+
+          <button
+            onClick={goToNextPage}
+            className={`px-4 py-2 rounded ${
+              currentPage === totalPages
+                ? "bg-gray-300"
+                : "bg-blue-500 text-white hover:bg-blue-600"
+            }`}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );

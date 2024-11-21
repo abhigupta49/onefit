@@ -2,12 +2,17 @@ const BASE_URL = "http://localhost:7025/api";
 
 async function Helpers(url, method = "GET", data = null, headers = {}) {
   let token = localStorage.getItem("token");
+  let usertoken = localStorage.getItem("usertoken");
+  console.log("Token in use:", url.startsWith("/user") ? usertoken : token);
+
   try {
     const options = {
       method: method,
       headers: {
         "Content-Type": "application/json",
-        ...(token && { authorization: token }),
+        ...(url.startsWith("/user") &&
+          usertoken && { authorization: usertoken }),
+        ...(url.startsWith("/admin") && token && { authorization: token }),
         ...headers, // Merge custom headers
       },
       body: data ? JSON.stringify(data) : null,
@@ -18,7 +23,8 @@ async function Helpers(url, method = "GET", data = null, headers = {}) {
 
     return responseData;
   } catch (error) {
-    console.log(error);
+    console.error("Error in Helpers function:", error);
+    throw error; // Re-throw the error for higher-level handling if needed
   }
 }
 

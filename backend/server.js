@@ -46,6 +46,8 @@ const adminRoutes = require("./routes/adminRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const productRoutes = require("./routes/productRoutes");
 const colorRoutes = require("./routes/colorRoutes");
+const userRoutes = require("./routes/userRoutes");
+const orderRoutes = require("./routes/orderRoutes");
 
 dotenv.config();
 
@@ -102,6 +104,8 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/admin/category", categoryRoutes);
 app.use("/api", productRoutes);
 app.use("/api/admin/color", colorRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/user/orders", orderRoutes);
 
 // Start server
 const PORT = process.env.PORT || 7025;

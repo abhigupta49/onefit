@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { FaStar, FaTruck, FaStore } from "react-icons/fa";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import FeaturedCollection from "./FeaturedCollection";
 import { useContext } from "react";
 import CartContext, { useCart } from "../context/CartContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import swal from "sweetalert";
+import Helpers from "../Helper/Helpers";
 const discountBadgeClass =
   "absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded";
 const ratingClass = "text-yellow-500 flex items-center";
@@ -33,43 +34,82 @@ const colorOptions = {
 const ProductDetails = () => {
   const { id } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
+  const { getAllCartData } = useCart();
   // const [loading, setLoading] = useState(true);
   // const [featuredCollection, setFeaturedCollection] = useState([]);
   // const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState("M");
+
   // const [selectedColor, setSelectedColor] = useState("gray"); // Default color
   // const [addedToCart, setAddedToCart] = useState(false); // New state for cart status
-  // const { addToCart } = useCart();
+  const { addToCart, ProductDetail, setProductDetail } = useCart();
   // console.log("fdfdfdfdere", product?.productName);
 
   const [selectedVariant, setSelectedVariant] = useState(product?.variants[0]);
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
+  const status = localStorage?.getItem("isUserAuthenticated");
+  const [selectedSize, setSelectedSize] = useState("");
 
+  const [cart, setCart] = useState([]);
+  // Handle Color Selection
   const handleColorChange = (colorName) => {
     const variant = product.variants.find(
-      (variant) => variant.color.name === colorName
+      (v) => v.color.name.toLowerCase() === colorName.toLowerCase()
     );
-    if (variant) {
-      setSelectedVariant(variant);
-    }
+    setSelectedVariant(variant);
+    setSelectedSize(""); // Reset size when color changes
   };
 
+  // Handle Size Selection
   const handleSizeChange = (size) => {
     setSelectedSize(size);
   };
 
-  const increaseQuantity = () => {
-    setQuantity(quantity + 1);
-  };
-
+  // Quantity Handlers
   const decreaseQuantity = () => {
     if (quantity > 1) setQuantity(quantity - 1);
   };
 
-  const handleAddToCart = () => {
-    setAddedToCart(true);
+  const increaseQuantity = () => {
+    if (quantity < selectedVariant?.quantity) setQuantity(quantity + 1);
+  };
+
+  const handleAddToCart = async () => {
+    if (!selectedSize) {
+      swal("Size Required", "Please select a size.", "warning");
+      return;
+    }
+
+    const data = {
+      id: selectedVariant.id,
+      productName: product.productName,
+      color: selectedVariant.color.name,
+      size: selectedSize,
+      quantity,
+      price: selectedVariant.price,
+      image: selectedVariant.image,
+    };
+
+    try {
+      const res = await Helpers("/user/addcart", "POST", data); // Pass token as argument
+      if (res && res?.status) {
+        // swal(res?.message, "success");
+        toast.success("Cart Item added Successfully");
+        getAllCartData();
+      } else {
+        console.log("Failed to add cart item");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    // setCart((prevCart) => [...prevCart, cartItem]);
+    // setAddedToCart(true);
+
+    // Optional: Store cart in localStorage
+    // localStorage.setItem("cart", JSON.stringify([...cart, cartItem]));
   };
 
   // useEffect(() => {
@@ -169,35 +209,16 @@ const ProductDetails = () => {
         <div className="flex flex-col space-y-4">
           <h2 className="text-2xl font-bold">{product?.productName}</h2>
           <div className="flex items-center text-yellow-500">
-            <FaStar className="mr-1" /> <FaStar className="mr-1" />
-            <FaStar className="mr-1" /> <FaStar className="mr-1" /> <FaStar />
+            <FaStar className="mr-1" />
+            <FaStar className="mr-1" />
+            <FaStar className="mr-1" />
+            <FaStar className="mr-1" />
+            <FaStar />
             <span className="text-gray-700 ml-2">4.1</span>
           </div>
           <p className="text-gray-600">{product?.productDisc}</p>
 
           {/* Color Selection */}
-          {/* <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Choose Color
-            </label>
-            <div className="flex space-x-3 mt-2">
-              {product?.variants?.map((variant, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleColorChange(variant?.color?.name)}
-                  className={`${
-                    colorOptions[variant?.color?.name] || "bg-gray-200"
-                  } w-8 h-8 rounded-full ${
-                    selectedVariant?.color?.name === variant?.color?.name
-                      ? "ring-2 ring-offset-2 ring-gray-500"
-                      : ""
-                  }`}
-                  title={variant?.color?.name}
-                />
-              ))}
-            </div>
-          </div> */}
-
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Choose Color
@@ -205,21 +226,17 @@ const ProductDetails = () => {
             <div className="flex space-x-3 mt-2">
               {product?.variants?.map((variant, index) => {
                 const colorName = variant?.color?.name?.toLowerCase();
-                const colorClass = `bg-${colorName}-300`; // Tailwind dynamic class
-
                 return (
                   <button
                     key={index}
                     onClick={() => handleColorChange(variant?.color?.name)}
                     className={`${
-                      colorClass || "bg-gray-200" // Fallback color if the color class is unavailable
-                    } w-8 h-8 rounded-full ${
                       selectedVariant?.color?.name === variant?.color?.name
                         ? "ring-2 ring-offset-2 ring-gray-500"
                         : ""
-                    }`}
+                    } w-8 h-8 rounded-full`}
                     title={variant?.color?.name}
-                    style={{ backgroundColor: colorName }} // Inline styling for custom colors
+                    style={{ backgroundColor: colorName }}
                   />
                 );
               })}

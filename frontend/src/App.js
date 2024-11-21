@@ -20,18 +20,17 @@ import Orders from "./AdminPages/Orders";
 import Users from "./AdminPages/Users";
 
 // Import Auth Context and Protected Route
-import { AuthProvider, useAuth } from './context/AuthContextAdmin';
-import ProtectedRoute from './component/ProtectedRoute';
-import ProductDetails from './component/ProductDetails';
-import AdminProductDetails from './AdminPages/AdminProductDetails';
-import { CartConextProvider } from './context/CartContext';
-import CartPages from './ClientPages/CartPages';
-import CheckoutPages from './ClientPages/CheckoutPages';
-import OnefitLoader from './component/OnefitLoader';
-import AddColor from './AdminPages/AddColor';
-import AddProduct from './AdminPages/AddProduct';
-import SignUp from './ClientPages/SignUp';
-
+import { AuthProvider, useAuth } from "./context/AuthContextAdmin";
+import ProtectedRoute from "./component/ProtectedRoute";
+import ProductDetails from "./component/ProductDetails";
+import AdminProductDetails from "./AdminPages/AdminProductDetails";
+import { CartConextProvider } from "./context/CartContext";
+import CartPages from "./ClientPages/CartPages";
+import CheckoutPages from "./ClientPages/CheckoutPages";
+import OnefitLoader from "./component/OnefitLoader";
+import AddColor from "./AdminPages/AddColor";
+import AddProduct from "./AdminPages/AddProduct";
+import SignUp from "./ClientPages/SignUp";
 
 const Tracksuit = () => (
   <h2 className="text-center mt-16">Tracksuit Category</h2>
@@ -43,13 +42,22 @@ function App() {
     <AuthProvider>
       <Router>
         <CartConextProvider>
-          <div>
-            <AppContent />
-          </div>
+          <AppContent />
         </CartConextProvider>
-        <Footer />
+        <ConditionalLayout />
       </Router>
     </AuthProvider>
+  );
+}
+
+function ConditionalLayout() {
+  const location = useLocation();
+
+  return (
+    <div>
+      {/* Show Footer unless the pathname is '/signup' */}
+      {location.pathname !== "/signup" && <Footer />}
+    </div>
   );
 }
 
@@ -71,7 +79,11 @@ const AppContent = () => {
     <>
       {/* Logo Loader */}
       {loading && <OnefitLoader />}
-      {isAdminPath ? <AdminNavbar /> : <Navbar />}
+      {location.pathname === "/signup" ? null : isAdminPath ? (
+        <AdminNavbar />
+      ) : (
+        <Navbar />
+      )}
 
       <Routes>
         {/* Main Routes */}
