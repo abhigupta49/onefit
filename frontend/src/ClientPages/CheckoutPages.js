@@ -22,7 +22,7 @@ import { useLocation } from "react-router-dom";
 
 export default function CheckoutPage() {
   const location = useLocation();
-  const { cart } = useCart();
+  const { cart, getAllCartData, getAllOrder } = useCart();
   const { userDetails } = useCart();
   let InitialData = {
     name: userDetails?.name,
@@ -70,6 +70,25 @@ export default function CheckoutPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const removeAllCartItem = async (id) => {
+    try {
+      // Make API call to delete the cart item
+      const response = await Helpers(
+        `/user/cart/delete-all`,
+        "DELETE",
+        null,
+        {}
+      );
+
+      if (response && response?.status) {
+        // toast?.success(response?.message);
+        getAllCartData();
+      }
+    } catch (error) {
+      console.error("Error deleting all item:", error.message);
+    }
+  };
+
   // Submit Handler
   const handleSubmit = async () => {
     if (!validate()) {
@@ -93,8 +112,6 @@ export default function CheckoutPage() {
       paymentMethod: formData.paymentMethod,
     };
 
-    console.log("KKKKKKKKKKKKKKKKKKK", orderData);
-
     if (formData.paymentMethod === "cash") {
       await addOrder(orderData);
     } else {
@@ -109,6 +126,8 @@ export default function CheckoutPage() {
       if (response.status) {
         toast.success("Order placed successfully!");
         setFormData(InitialData);
+        removeAllCartItem();
+        getAllOrder();
       } else {
         console.log("Error placing order: " + response.message);
       }

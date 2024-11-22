@@ -46,6 +46,7 @@ export default function Auth() {
       if (res && res?.status) {
         localStorage.setItem("usertoken", res?.token);
         localStorage.setItem("isUserAuthenticated", "true");
+        localStorage.setItem("id", res?.data?._id);
         setCredentials(credentials);
         setUserDetails(res?.data);
         swal("Login", res?.msg, "success");

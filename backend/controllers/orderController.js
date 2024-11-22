@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Order = require("../models/orderModel");
 
 const createOrder = async (req, res) => {
@@ -28,35 +29,12 @@ const createOrder = async (req, res) => {
 
 const getUserOrders = async (req, res) => {
   try {
-    const userId = req.params.userId;
-    console.log(userId);
+    const { userId } = req.params;
 
-    // Fetching orders for the user
-    const orders = await Order.aggregate([
-      {
-        $match: {
-          "user._id": userId, // Match the user ID in the orders
-        },
-      },
-      {
-        $lookup: {
-          from: "users", // Lookup from the users collection
-          localField: "user._id", // Match the user ID from the order
-          foreignField: "_id", // Foreign key from the users collection
-          as: "userDetails",
-        },
-      },
-      {
-        $unwind: "$userDetails", // Unwind to get user details directly
-      },
-      {
-        $project: {
-          "userDetails.password": 0, // Optionally exclude sensitive fields like password
-          "userDetails.__v": 0,
-        },
-      },
-    ]);
+    // Find orders that match the userId
+    const orders = await Order.find({ "cartItems.userId": userId });
 
+    // If no orders are found, return a message
     if (orders.length === 0) {
       return res.status(404).send({
         status: false,
@@ -64,6 +42,7 @@ const getUserOrders = async (req, res) => {
       });
     }
 
+    // Send back the orders
     res.send({
       status: true,
       data: orders,
@@ -75,6 +54,8 @@ const getUserOrders = async (req, res) => {
     });
   }
 };
+
+module.exports = { getUserOrders };
 
 const deleteOrder = async (req, res) => {
   try {

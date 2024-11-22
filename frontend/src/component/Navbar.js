@@ -1,6 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 
 import React, { useEffect, useState } from "react";
+import { FaClipboardList } from "react-icons/fa";
+
 import {
   FaSearch,
   FaUserAlt,
@@ -18,8 +20,14 @@ const Navbar = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // New state for login
-   const {cartData, setCartData, getAllCartData } =
-     useCart();
+  const {
+    cartData,
+    setCartData,
+    getAllCartData,
+    allOrder,
+    setAllOrder,
+    getAllOrder,
+  } = useCart();
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
 
@@ -29,8 +37,6 @@ const Navbar = () => {
     window.scrollTo(0, 0);
     getAllCategory();
   }, []);
-
-
 
   const getAllCategory = async () => {
     try {
@@ -110,8 +116,11 @@ const Navbar = () => {
           </div>
 
           {/* Icons */}
-          <div className="flex space-x-4 text-lg">
+          <div className="flex space-x-4 text-lg relative">
+            {/* Search Icon */}
             <FaSearch className="cursor-pointer hover:text-gray-400" />
+
+            {/* User/Sign-In Icon */}
             <div className="relative">
               {isLoggedIn ? (
                 <FaUserAlt
@@ -124,29 +133,24 @@ const Navbar = () => {
                   className="cursor-pointer hover:text-gray-400"
                 />
               )}
-              {isLoggedIn && isDropdownOpen && (
-                <div className="absolute right-0 bg-white text-black mt-2 rounded shadow-md w-32 z-20">
-                  <Link
-                    to="/my-orders"
-                    className="block px-4 py-2 hover:bg-gray-200"
-                  >
-                    My Orders
-                  </Link>
-                  <Link
-                    to="/my-address"
-                    className="block px-4 py-2 hover:bg-gray-200"
-                  >
-                    My Address
-                  </Link>
-                </div>
-              )}
             </div>
-            <Link to={`/cart`}>
+
+            {/* Cart Icon */}
+            <Link to={`/cart`} className="relative">
               <FaShoppingCart className="cursor-pointer hover:text-gray-400" />
-              {/* Cart count */}
               {cartData?.length > 0 && (
-                <span className="absolute top-6 right-5 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                <span className="absolute -top-2 -right-5 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
                   {cartData?.length}
+                </span>
+              )}
+            </Link>
+
+            {/* Orders Icon */}
+            <Link to={`/order`} className="relative">
+              <FaClipboardList className="cursor-pointer hover:text-gray-400" />
+              {allOrder?.length > 0 && (
+                <span className="absolute -top-2 -right-5 bg-blue-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                  {allOrder?.length}
                 </span>
               )}
             </Link>
@@ -202,6 +206,14 @@ const Navbar = () => {
               {cartData?.length > 0 && (
                 <span className="absolute -top-2 -right-5 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
                   {cartData?.length}
+                </span>
+              )}
+            </div>
+            <div className="relative">
+              <FaClipboardList className="cursor-pointer hover:text-gray-400" />
+              {allOrder?.length > 0 && (
+                <span className="absolute -top-2 -right-5 bg-blue-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                  {allOrder?.length}
                 </span>
               )}
             </div>

@@ -31,6 +31,7 @@ import OnefitLoader from "./component/OnefitLoader";
 import AddColor from "./AdminPages/AddColor";
 import AddProduct from "./AdminPages/AddProduct";
 import SignUp from "./ClientPages/SignUp";
+import OrderPage from "./component/OrderPage";
 
 const Tracksuit = () => (
   <h2 className="text-center mt-16">Tracksuit Category</h2>
@@ -93,6 +94,7 @@ const AppContent = () => {
             <Route path="/category/tracksuit" element={<Tracksuit />} />
             <Route path="/category/tshirt" element={<TShirt />} />
             <Route path="/cart" element={<CartPages />} />
+            <Route path="/order" element={<OrderPage />} />
             <Route path="/products" element={<ProductDetails />} />
             <Route path="/checkout" element={<CheckoutPages />} />
             <Route path="/signup" element={<SignUp />} />

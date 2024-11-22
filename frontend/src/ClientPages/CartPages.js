@@ -236,9 +236,11 @@ export default function ShoppingCart() {
                 </Card>
               ))
             )}
-            <Button className="mt-4" onClick={removeAllCartItem}>
-              Clear Cart
-            </Button>
+            {!cartData?.length === 0 && (
+              <Button className="mt-4" onClick={removeAllCartItem}>
+                Clear Cart
+              </Button>
+            )}
           </div>
 
           {cartData?.length > 0 && (

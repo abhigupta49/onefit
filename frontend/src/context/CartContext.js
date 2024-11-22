@@ -22,7 +22,27 @@ export const CartConextProvider = ({ children }) => {
   useEffect(() => {
     window.scrollTo(0, 0);
     getAllCartData();
+    getAllOrder();
   }, []);
+  const [allOrder, setAllOrder] = useState([]);
+
+  const getAllOrder = async () => {
+    try {
+      const res = await Helpers(
+        `/user/orders/get/${localStorage.getItem("id")}`,
+        "GET",
+        null,
+        {}
+      ); // Pass token as argument
+      if (res && res?.status) {
+        setAllOrder(res?.data);
+      } else {
+        console.log("Failed to fetch categories");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const getAllCartData = async () => {
     try {
@@ -91,6 +111,9 @@ export const CartConextProvider = ({ children }) => {
         getAllCartData,
         userDetails,
         setUserDetails,
+        allOrder,
+        setAllOrder,
+        getAllOrder,
       }}
     >
       {children}

@@ -77,6 +77,18 @@ const ProductDetails = () => {
   };
 
   const handleAddToCart = async () => {
+    if (!localStorage?.getItem("isUserAuthenticated")) {
+      toast("Please log in or create an account to continue!", {
+        position: "top-right",
+        autoClose: 5000,
+        type: "info",
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      return;
+    }
     if (!selectedSize) {
       swal("Size Required", "Please select a size.", "warning");
       return;
