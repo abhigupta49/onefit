@@ -32,6 +32,7 @@ import AddColor from "./AdminPages/AddColor";
 import AddProduct from "./AdminPages/AddProduct";
 import SignUp from "./ClientPages/SignUp";
 import OrderPage from "./component/OrderPage";
+import CategoryPage from "./ClientPages/CategoryPage";
 
 const Tracksuit = () => (
   <h2 className="text-center mt-16">Tracksuit Category</h2>
@@ -91,8 +92,7 @@ const AppContent = () => {
         {!isAdminPath && (
           <>
             <Route path="/" element={<HomePage />} />
-            <Route path="/category/tracksuit" element={<Tracksuit />} />
-            <Route path="/category/tshirt" element={<TShirt />} />
+            <Route path="/category/:category" element={<CategoryPage />} />
             <Route path="/cart" element={<CartPages />} />
             <Route path="/order" element={<OrderPage />} />
             <Route path="/products" element={<ProductDetails />} />
